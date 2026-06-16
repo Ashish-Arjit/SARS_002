@@ -19,6 +19,11 @@ st.set_page_config(
 # Custom premium styling using CSS
 st.markdown("""
     <style>
+    /* Hide the Streamlit Deploy button and top header bar */
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+    
     /* Import Google Font */
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
     
