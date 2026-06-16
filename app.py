@@ -16,114 +16,171 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Initialize session state for theme selection
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+# Create Sidebar controls for Theme Toggle
+st.sidebar.markdown("## ⚙️ Control Panel")
+theme_choice = st.sidebar.selectbox(
+    "Select Interface Theme",
+    ["☀️ Light Theme", "🌙 Dark Theme"],
+    index=0 if st.session_state.theme == 'light' else 1
+)
+
+# Update the theme state and trigger rerun if changed
+selected_theme = 'light' if "Light" in theme_choice else 'dark'
+if selected_theme != st.session_state.theme:
+    st.session_state.theme = selected_theme
+    st.rerun()
+
+# Define theme variables dynamically
+if st.session_state.theme == 'light':
+    bg_gradient = "linear-gradient(135deg, #f4f7f6 0%, #e8efec 100%)"
+    card_bg = "#ffffff"
+    text_color = "#2d3748"
+    card_border = "rgba(46, 125, 50, 0.1)"
+    success_bg = "linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)"
+    success_text = "#1b5e20"
+    success_border = "#2e7d32"
+    banner_bg = "linear-gradient(90deg, #1e3f20 0%, #2e7d32 100%)"
+    banner_text = "#ffffff"
+    text_muted = "#666666"
+    tab_text = "#1e3f20"
+else:
+    bg_gradient = "linear-gradient(135deg, #0e1210 0%, #161e1b 100%)"
+    card_bg = "#1c2521"
+    text_color = "#e2e8f0"
+    card_border = "rgba(76, 175, 80, 0.2)"
+    success_bg = "linear-gradient(135deg, #142a1b 0%, #22472e 100%)"
+    success_text = "#a3e635"
+    success_border = "#4caf50"
+    banner_bg = "linear-gradient(90deg, #0b1a0e 0%, #18401e 100%)"
+    banner_text = "#ffffff"
+    text_muted = "#a0aec0"
+    tab_text = "#a3e635"
+
 # Custom premium styling using CSS
-st.markdown("""
+st.markdown(f"""
     <style>
     /* Hide the Streamlit Deploy button and top header bar */
-    header[data-testid="stHeader"] {
+    header[data-testid="stHeader"] {{
         display: none !important;
-    }
+    }}
     
     /* Import Google Font */
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
     
     /* Apply Font Family globally */
-    * {
+    * {{
         font-family: 'Outfit', sans-serif;
-    }
+    }}
     
     /* Main container background gradient */
-    .stApp {
-        background: linear-gradient(135deg, #f4f7f6 0%, #e8efec 100%);
-    }
+    .stApp {{
+        background: {bg_gradient};
+    }}
+    
+    /* General text color overrides based on active theme */
+    .stApp [data-testid="stMarkdownContainer"] p, 
+    .stApp [data-testid="stWidgetLabel"] p,
+    .stApp h3,
+    .stApp li {{
+        color: {text_color} !important;
+    }}
     
     /* Premium Title Banner */
-    .banner {
-        background: linear-gradient(90deg, #1e3f20 0%, #2e7d32 100%);
-        color: white;
+    .banner {{
+        background: {banner_bg};
+        color: {banner_text};
         padding: 2.5rem 2rem;
         border-radius: 16px;
         text-align: center;
         margin-bottom: 2rem;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    }
+    }}
     
-    .banner h1 {
+    .banner h1 {{
         font-size: 2.8rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        color: #ffffff !important;
+        color: {banner_text} !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
+    }}
     
-    .banner p {
+    .banner p {{
         font-size: 1.1rem;
         font-weight: 300;
         opacity: 0.9;
         margin: 0;
-    }
+        color: {banner_text} !important;
+    }}
     
     /* Sidebar styling override */
-    [data-testid="stSidebar"] {
+    [data-testid="stSidebar"] {{
         background-color: #1e3f20;
         color: white;
-    }
-    [data-testid="stSidebar"] * {
+    }}
+    [data-testid="stSidebar"] * {{
         color: white !important;
-    }
+    }}
     
     /* Card styling */
-    .card {
-        background-color: white;
+    .card {{
+        background-color: {card_bg};
         padding: 2rem;
         border-radius: 16px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(46, 125, 50, 0.1);
+        border: 1px solid {card_border};
         margin-bottom: 1.5rem;
-    }
+    }}
     
-    .card-title {
-        color: #1e3f20;
+    .card-title {{
+        color: {tab_text} !important;
         font-size: 1.4rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #2e7d32;
+        border-bottom: 2px solid {success_border};
         padding-bottom: 0.5rem;
-    }
+    }}
     
     /* Recommendation Output Cards */
-    .success-card {
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        color: #1b5e20;
+    .success-card {{
+        background: {success_bg};
+        color: {success_text};
         padding: 2rem;
         border-radius: 16px;
-        border-left: 8px solid #2e7d32;
+        border-left: 8px solid {success_border};
         box-shadow: 0 8px 20px rgba(46, 125, 50, 0.15);
         margin-top: 1.5rem;
         text-align: center;
-    }
+    }}
     
-    .success-crop {
+    .success-card h3 {{
+        color: {success_text} !important;
+    }}
+    
+    .success-crop {{
         font-size: 3rem;
         font-weight: 800;
-        color: #1b5e20;
+        color: {success_text} !important;
         margin: 0.5rem 0;
         text-transform: capitalize;
-    }
+    }}
     
-    .success-conf {
+    .success-conf {{
         font-size: 1.2rem;
         font-weight: 600;
-        color: #2e7d32;
-    }
+        color: {success_text} !important;
+    }}
     
     /* Tooltip / description style */
-    .metric-desc {
+    .metric-desc {{
         font-size: 0.85rem;
-        color: #666;
+        color: {text_muted} !important;
         margin-top: -8px;
         margin-bottom: 8px;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
